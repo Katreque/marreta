@@ -5,6 +5,8 @@ const readline = require('readline');
 const ManipulacaoLog = require('./manipulacaoLog.js');
 const ManipulacaoProcesso = require('./manipulacaoProcesso');
 
+ManipulacaoProcesso.ativarDebugModeDll();
+
 var analisarlog = function() {
     $('#containerInfo').text("Carregando...");
     ManipulacaoLog.lerLog()
@@ -39,21 +41,33 @@ var verificarInicializacao = function(data) {
   return;
 }
 
-var encerraProcesso = function() {
+var iniciarProcessoDll = function() {
+  $('#containerInfo').text("Inicializando...");
+  ManipulacaoProcesso.iniciarProcessoDll()
+    .then((res) => {
+      $('#containerInfo').text("Inicializada.");
+    })
+    .catch((err) => {
+      $('#containerInfo').text(err.toString());
+    })
+}
+
+var encerrarProcessoDll = function() {
   ManipulacaoProcesso.encerrarProcessoDll()
     .then((res) => {
       ManipulacaoLog.deletarLog();
-      return alert(res);
+      return $('#containerInfo').text(res);
     })
     .catch((err) => {
-      alert(err);
+      return $('#containerInfo').text(err);
     })
 }
 
 var retornarTopo = function() {
-  return document.documentElement.scrollTop = 0;
+  return document.getElementById("containerScroll").scrollTop = 0;
 }
 
 $('#iniciarProcessamento').on('click', analisarlog);
-$('#encerrarProcessoDll').on('click', encerraProcesso);
+$('#encerrarProcessoDll').on('click', encerrarProcessoDll);
+$('#iniciarProcessoDll').on('click', iniciarProcessoDll);
 $('#retornaAoTopo').on('click', retornarTopo);

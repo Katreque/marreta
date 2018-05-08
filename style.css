@@ -1,6 +1,15 @@
+.header {
+  font-family: 'Montserrat', sans-serif;
+}
+
 .botaoFlutuante {
   position: fixed;
   width: 50px;
   top: 90%;
   right: 5%;
+}
+
+.divScroll {
+  max-height: 500px;
+  overflow-y: auto;
 }
