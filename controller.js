@@ -2,18 +2,22 @@ const $ = require('jquery');
 const fs = require('fs');
 const readline = require('readline');
 
-var log = function() {
-  fs.readFile('C:\\ProgramData\\Local\\Temp\\.nfeasy-cache\\host-log.txt', 'latin1', ((err, data) => {
-    if (err) {
-      $('#containerInfo').text(err.toString());
-    }
+const ManipulacaoLog = require('./manipulacaoLog.js');
+const ManipulacaoProcesso = require('./manipulacaoProcesso');
 
-    $('#containerInfo').text(data);
-    verificaInicializacao(data);
-  }));
+var analisarlog = function() {
+    $('#containerInfo').text("Carregando...");
+    ManipulacaoLog.lerLog()
+      .then((data) => {
+        $('#containerInfo').text(data);
+        verificarInicializacao(data);
+      })
+      .catch((err) => {
+        $('#containerInfo').text(err);
+      })
 }
 
-var verificaInicializacao = function(data) {
+var verificarInicializacao = function(data) {
   $('#extensaoConexaoDllContainer').remove();
 
   if (data.indexOf(`"retorno":1,"mensagem":"Inicialização completa."`) !== -1) {
@@ -35,9 +39,21 @@ var verificaInicializacao = function(data) {
   return;
 }
 
+var encerraProcesso = function() {
+  ManipulacaoProcesso.encerrarProcessoDll()
+    .then((res) => {
+      ManipulacaoLog.deletarLog();
+      return alert(res);
+    })
+    .catch((err) => {
+      alert(err);
+    })
+}
+
 var retornarTopo = function() {
   return document.documentElement.scrollTop = 0;
 }
 
-$('#iniciarProcessamento').on('click', log);
+$('#iniciarProcessamento').on('click', analisarlog);
+$('#encerrarProcessoDll').on('click', encerraProcesso);
 $('#retornaAoTopo').on('click', retornarTopo);
