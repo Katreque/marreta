@@ -1,6 +1,6 @@
 {
   "name": "M.A.R.R.E.T.A.E.",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -15,8 +15,7 @@
       "**/*"
     ],
     "extraFiles": [
-      "dllEnder.bat",
-      "openChromeExtension.bat"
+      "dllEnder.bat"
     ],
     "mac": {
       "category": "fon"
@@ -32,6 +31,7 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
     "popper.js": "^1.14.3",
+    "regedit": "^3.0.0",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
