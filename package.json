@@ -1,6 +1,6 @@
 {
   "name": "M.A.R.R.E.T.A.E.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -11,6 +11,9 @@
   },
   "build": {
     "appId": "777",
+    "asarUnpack": [
+      "**/node_modules/regedit/**/*"
+    ],
     "files": [
       "**/*"
     ],
@@ -29,6 +32,7 @@
     "bootstrap": "^4.1.1",
     "child_process": "^1.0.2",
     "font-awesome": "^4.7.0",
+    "hazardous": "^0.3.0",
     "jquery": "^3.3.1",
     "popper.js": "^1.14.3",
     "regedit": "^3.0.0",

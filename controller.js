@@ -5,7 +5,11 @@ const readline = require('readline');
 const ManipulacaoLog = require('./manipulacaoLog.js');
 const ManipulacaoProcesso = require('./manipulacaoProcesso');
 
-ManipulacaoProcesso.ativarDebugModeDll();
+var possuiFrontLocal = false;
+
+class kappa{
+  
+};
 
 var analisarlog = function() {
     $('#containerInfo').text("Carregando...");
@@ -43,7 +47,7 @@ var verificarInicializacao = function(data) {
 
 var iniciarProcessoDll = function() {
   $('#containerInfo').text("Inicializando...");
-  ManipulacaoProcesso.iniciarProcessoDll()
+  ManipulacaoProcesso.iniciarProcessoDll(possuiFrontLocal, $('#valorPortaFrontLocal').val())
     .then((res) => {
       $('#containerInfo').text("Inicializada.");
     })
@@ -53,21 +57,48 @@ var iniciarProcessoDll = function() {
 }
 
 var encerrarProcessoDll = function() {
+  // Finally não é aceito no es5? :wutface:
   ManipulacaoProcesso.encerrarProcessoDll()
     .then((res) => {
-      ManipulacaoLog.deletarLog();
+      ManipulacaoLog.deletarLog()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
       return $('#containerInfo').text(res);
     })
     .catch((err) => {
+      ManipulacaoLog.deletarLog()
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
       return $('#containerInfo').text(err);
     })
+}
+
+var togglePossuiFrontLocal = function() {
+  possuiFrontLocal = !possuiFrontLocal;
+  if (!($('#valorPortaFrontLocal').val())) {
+    $('#valorPortaFrontLocal').val(7777);
+  }
+  return possuiFrontLocal?$('#portaFrontLocal').show(1000):$('#portaFrontLocal').hide(1000);
 }
 
 var retornarTopo = function() {
   return document.getElementById("containerScroll").scrollTop = 0;
 }
 
+//onCreate
+ManipulacaoProcesso.ativarDebugModeDll();
+togglePossuiFrontLocal();
+
 $('#iniciarProcessamento').on('click', analisarlog);
 $('#encerrarProcessoDll').on('click', encerrarProcessoDll);
 $('#iniciarProcessoDll').on('click', iniciarProcessoDll);
+$('#frontLocal').on('change', togglePossuiFrontLocal);
 $('#retornaAoTopo').on('click', retornarTopo);

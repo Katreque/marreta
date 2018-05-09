@@ -16,9 +16,22 @@
           <h4>Método Alternativo de Ratificação e Resolução Emergencial de Tarefas Abortadas para a Extensão</h4>
         </div>
         <div class="col-sm-3">
-          <button id="encerrarProcessoDll" class="btn btn-danger btn-block">Encerrar DLL</button>
-          <button id="iniciarProcessoDll" class="btn btn-teal btn-block">Iniciar DLL</button>
-          <button id="iniciarProcessamento" class="btn btn-primary btn-block">Analisar</button>
+          <button id="encerrarProcessoDll" class="btn btn-outline-dark">Encerrar</button>
+          <button id="iniciarProcessoDll" class="btn btn-outline-dark">Iniciar</button>
+          <button id="iniciarProcessamento" class="btn btn-dark">Analisar</button>
+          <div class="row">
+            <div id="frontLocal" class="col-sm-5 mt-2">
+              <span>Front Local?</span>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div id="portaFrontLocal" class="col-sm-4 mt-2">
+              <span>Porta</span>
+              <input id="valorPortaFrontLocal" type="input" class="form-control">
+            </div>
+          </div>
         </div>
       </div>
       <div class="row m-2">

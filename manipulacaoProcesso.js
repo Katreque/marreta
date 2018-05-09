@@ -2,6 +2,9 @@ const cp = require('child_process');
 const fs = require('fs');
 const xml2js = require('xml2js');
 const parseString = xml2js.parseString;
+
+//Motivo: https://github.com/electron-userland/electron-builder/issues/1120
+require ('hazardous');
 const regedit = require('regedit');
 
 const DLL_CONFIG = "C:\\Program Files (x86)\\Alterdata\\Nimbus\\Koopon-e\\Host\\NFeasy2.Plugin.Navegador.exe.config";
@@ -21,6 +24,10 @@ var encerrarProcessoDll = function() {
 var _caminhoArquivoConfigExtensao = function() {
   return new Promise((resolve, reject) => {
     regedit.list(['HKCU\\SOFTWARE\\GOOGLE\\CHROME\\NATIVEMESSAGINGHOSTS\\BR.COM.ALTERDATA.KOOPON'], function(err, result) {
+      if (!!err) {
+        return reject(err);
+      }
+
       let _resultadoParseado = result['HKCU\\SOFTWARE\\GOOGLE\\CHROME\\NATIVEMESSAGINGHOSTS\\BR.COM.ALTERDATA.KOOPON'];
       return resolve((_resultadoParseado.values[""].value).toString());
     })
@@ -34,22 +41,29 @@ var _obterIdArquivoConfigExtensao = function(localArquivoConfig) {
         return reject(err);
       }
       data = JSON.parse(data);
-      console.log(data);
       return resolve(data.allowed_origins[0]);
     })
   })
 }
 
-var _criaBatOpenChromeExtension = function(idArquivoConfig){
+var _criaBatOpenChromeExtension = function(idArquivoConfig, possuiFrontLocal, portaFrontLocal){
+  var AMB_KOOPON = "";
+
+  if (!!possuiFrontLocal) {
+    AMB_KOOPON = "https://koopon-dev.alterdata.com.br:" + portaFrontLocal.toString();
+  } else {
+    AMB_KOOPON = "https://koopon-dev.alterdata.com.br";
+  }
+
   return new Promise((resolve, reject) => {
     let arquivoEscrita =
     `
     @echo off
-    start chrome --new-window `+idArquivoConfig+`views/popup.html
+    start chrome --new-window `+idArquivoConfig+`views/popup.html `+AMB_KOOPON+`
     :exit
     `;
 
-    fs.writeFile('./openChromeExtension.bat', arquivoEscrita, function(err) {
+    fs.writeFile('openChromeExtension.bat', arquivoEscrita, function(err) {
       if (!!err) {
         return reject(err);
       }
@@ -59,26 +73,26 @@ var _criaBatOpenChromeExtension = function(idArquivoConfig){
   })
 }
 
-var iniciarProcessoDll = function() {
+var iniciarProcessoDll = function(possuiFrontLocal, portaFrontLocal) {
   return new Promise((resolve, reject) => {
     _caminhoArquivoConfigExtensao()
       .then((localArquivo) => {
         return _obterIdArquivoConfigExtensao(localArquivo);
       })
       .then((idArquivoConfig) => {
-        return _criaBatOpenChromeExtension(idArquivoConfig)
+        return _criaBatOpenChromeExtension(idArquivoConfig, possuiFrontLocal, portaFrontLocal);
       })
       .then(() => {
         cp.exec("openChromeExtension.bat", function(err, stdout, stderr){
           if (!!err) {
-            return reject("Erro ao abrir!");
+            return reject("Erro ao abrir openChromeExtension.bat!");
           }
 
           return resolve()
         })
       })
       .catch((err) => {
-        alert(err);
+        throw(err);
       })
     })
 }
